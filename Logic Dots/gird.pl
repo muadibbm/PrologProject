@@ -1,1 +1,0 @@
-make_grid([RowNum | Row], [ColNum | Col], Grid) :- nl.
