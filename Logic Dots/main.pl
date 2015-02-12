@@ -2,6 +2,5 @@
 :- consult('grid.pl').
 :- consult('solve.pl').
 
-run(Filename) :- nl.
-	%readInput(Filename, InputData),
-	%make_grid(InputData, 
+run(RowConstraints, ColConstraints, BlockedCells) :- 
+	make_grid(RowConstraints, ColConstraints, BlockedCells, Grid). 
