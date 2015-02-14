@@ -20,6 +20,11 @@ occurrences([X|Y],X,N):- occurrences(Y,X,W),N is W + 1.
 occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.
 
 goally(Row,Column,Total,Grid):- 
-	equals(equally(Row,Column),0),
+	checkSumEquality(Row,0),
+	checkSumEquality(Column,0),
 	flatten(Grid,G),
-	equal(Total,occurrences(G,o,0)).
+	checkTotal(G,Total).
+	
+checkSumEquality(L, S) :- Sum = S, list_adder(L, Sum).
+
+checkTotal(G,T):- Occ = T,occurrences(G,o,Occ).
