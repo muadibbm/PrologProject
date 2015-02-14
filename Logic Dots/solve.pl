@@ -14,3 +14,12 @@ increment(A,B):-
 	
 decrement(A,B):-
 	B is A-1.
+
+occurrences([],_,0).
+occurrences([X|Y],X,N):- occurrences(Y,X,W),N is W + 1.
+occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.
+
+goally(Row,Column,Total,Grid):- 
+	equals(equally(Row,Column),0),
+	flatten(Grid,G),
+	equal(Total,occurrences(G,o,0)).
