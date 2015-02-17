@@ -10,19 +10,17 @@ breadthfirst(Row,Column,Blocked,Total,[[Node|Path]|_],[Node|Path]):-
 	goal(Row,Column,Total,Node).
 
 breadthfirst(Row,Column,Blocked,Total,[Path|Paths],SolutionPath):-
- 	expand_breadthfirst(Row,Column,Blocked,Total,Path,ExpPaths),
+ 	expand_breadthfirst(Row,Column,Blocked,Total,Path,ExpPaths,NewRow,NewColumn),
 	append(Paths,ExpPaths,NewPaths),
- 	breadthfirst(Row,Column,Blocked,Total,NewPaths,SolutionPath).
+ 	breadthfirst(NewRow,NewColumn,Blocked,Total,NewPaths,SolutionPath).
 
-expand_breadthfirst(Row,Column,Blocked,Total,[Node|Path],ExpPaths):-
+expand_breadthfirst(Row,Column,Blocked,Total,[Node|Path],ExpPaths,NewRow,NewColumn):-
  	findall([NewNode,Node|Path],
-	move_cyclefree(Row,Column,Blocked,Total,Path,Node,NewNode),
+	move_cyclefree(Row,Column,Blocked,Total,Path,Node,NewNode,NewRow,NewColumn),
 	ExpPaths).
 
-move_cyclefree(Row,Column,Blocked,Total,Visited,Node,NextNode):-
-	member(X, [0,1,2]),
-	member(Y, [0,1,2]),
-	markDot(Node,Blocked,X/Y,Row,Column,NextNode,NewRow,NewColumn),
+move_cyclefree(Row,Column,Blocked,Total,Visited,Node,NextNode,NewRow,NewColumn):-
+	markDot(Node,Blocked,Row,Column,NextNode,NewRow,NewColumn),
 	\+ member(NextNode,Visited).
 
 checkSumEquality(L, S) :- Sum = S, list_adder(L, Sum).
@@ -37,7 +35,9 @@ occurrences([X|Y],X,N):- occurrences(Y,X,W),N is W + 1.
 occurrences([X|Y],Z,N):- occurrences(Y,Z,N),X\=Z.	
 
 equally(A,B):-
-	equals(list_adder(A,_),list_adder(B,_)).
+	list_adder(A,SA),
+	list_adder(B,SB),
+	SA == SB.
 
 decrement(A,B):-
 	B is A-1.
@@ -56,13 +56,14 @@ decrementAt(I,List,NewList):-
 	NewValue is Value - 1,
 	insert_at(NewValue,NewList1,J,NewList).
 
-markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
+markDot(Dotted,Blocked,Row,Column,[X/Y|Dotted],NewRow,NewColumn):-
+	member(X, [0,1]),
+	member(Y, [0,1]),
 	\+ member(X/Y,Blocked),
 	nth0(X,Row,RConstraint),
 	RConstraint \= 0,
 	nth0(Y,Column,CConstraint),
 	CConstraint \= 0,
-	append([X/Y],Dotted,NewDotted),
 	decrementAt(X,Row,NewRow),
 	decrementAt(Y,Column,NewColumn).
 
