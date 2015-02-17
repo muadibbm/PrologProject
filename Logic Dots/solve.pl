@@ -34,3 +34,28 @@ equally(A,B):-
 
 decrement(A,B):-
 	B is A-1.
+	
+%X is the index,list,index,newList	
+remove_at(X,[X|Xs],1,Xs).
+remove_at(X,[Y|Xs],K,[Y|Ys]) :- K > 1, 
+   K1 is K - 1, remove_at(X,Xs,K1,Ys).
+
+%X is the element,List,position,Newlist
+insert_at(X,L,K,R) :- remove_at(X,R,K,L).
+
+decrementAt(I,List,NewList):-
+	J is I + 1,
+	nth0(I,List,Value),
+	remove_at(J,List,J,NewList1),
+	NewValue is Value - 1,
+	insert_at(NewValue,NewList1,I,NewList).
+	
+markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
+	\+ member(X/Y,Blocked),
+	nth0(X,Row,RConstraint),
+	RConstraint \= 0,
+	nth0(Y,Column,CConstraint),
+	CConstraint \= 0,
+	append([X/Y],Dotted,NewDotted).
+	%decrementAt(X,Row,NewRow),
+	%decrementAt(Y,Column,NewColumn).
