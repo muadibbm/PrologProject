@@ -20,8 +20,9 @@ expand_breadthfirst(Row,Column,Blocked,Total,[Node|Path],ExpPaths):-
 	ExpPaths).
 
 move_cyclefree(Row,Column,Blocked,Total,Visited,Node,NextNode):-
-	member(X, [0,1]),
-	markDot(Node,Blocked,X,Row,Column,NextNode,NewRow,NewColumn),
+	member(X, [0,1,2]),
+	member(Y, [0,1,2]),
+	markDot(Node,Blocked,X/Y,Row,Column,NextNode,NewRow,NewColumn),
 	\+ member(NextNode,Visited).
 
 checkSumEquality(L, S) :- Sum = S, list_adder(L, Sum).
@@ -54,9 +55,8 @@ decrementAt(I,List,NewList):-
 	remove_at(Junk,List,J,NewList1),
 	NewValue is Value - 1,
 	insert_at(NewValue,NewList1,J,NewList).
-	
-markDot(Dotted,Blocked,X,Row,Column,NewDotted,NewRow,NewColumn):-
-	member(Y, [0,1]),
+
+markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
 	\+ member(X/Y,Blocked),
 	nth0(X,Row,RConstraint),
 	RConstraint \= 0,
@@ -65,8 +65,6 @@ markDot(Dotted,Blocked,X,Row,Column,NewDotted,NewRow,NewColumn):-
 	append([X/Y],Dotted,NewDotted),
 	decrementAt(X,Row,NewRow),
 	decrementAt(Y,Column,NewColumn).
-	%Row = NewRow,
-	%Column = NewColumn.
 
 goal(Row,Column,Total,Dotted):- 
 	checkSumEquality(Row,0),
