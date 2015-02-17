@@ -1,5 +1,4 @@
 
-solve([RowNum | Row], [ColNum | Col], [GridRow | RestOfGridRows], SolvedGrid) :- nl.
 
 solve(Row,Column,Node,Path):-
 	equally(Row,Column),
@@ -9,8 +8,6 @@ solve(Row,Column,Node,Path):-
 
 breadthfirst(Row,Column,Total,[[Node|Path]|_],[Node|Path]):-
 	goal(Row,Column,Total,Node).
-
-
 
 goal(Row,Column,Total,Grid):- 
 	checkSumEquality(Row,0),
@@ -34,7 +31,6 @@ equally(A,B):-
 
 decrement(A,B):-
 	B is A-1.
-	
 %X is the index,list,index,newList	
 remove_at(X,[X|Xs],1,Xs).
 remove_at(X,[Y|Xs],K,[Y|Ys]) :- K > 1, 
@@ -46,7 +42,7 @@ insert_at(X,L,K,R) :- remove_at(X,R,K,L).
 decrementAt(I,List,NewList):-
 	J is I + 1,
 	nth0(I,List,Value),
-	remove_at(J,List,J,NewList1),
+	remove_at(Junk,List,J,NewList1),
 	NewValue is Value - 1,
 	insert_at(NewValue,NewList1,J,NewList).
 	
