@@ -1,19 +1,28 @@
 
-
-solve(Row,Column,Node,Path):-
+solve(Row,Column,Blocked,Node,Path):-
 	equally(Row,Column),
 	list_adder(Row,Total),
-	breadthfirst(Row,Column,Total,[[Node]],RevPath),
+	breadthfirst(Row,Column,Blocked,Total,[[Node]],RevPath),
 	reverse(RevPath,Path).
 
-breadthfirst(Row,Column,Total,[[Node|Path]|_],[Node|Path]):-
+
+breadthfirst(Row,Column,Blocked,Total,[[Node|Path]|_],[Node|Path]):-
 	goal(Row,Column,Total,Node).
 
-goal(Row,Column,Total,Grid):- 
-	checkSumEquality(Row,0),
-	checkSumEquality(Column,0),
-	flatten(Grid,G),
-	checkTotal(G,Total).
+breadthfirst(Row,Column,Blocked,Total,[Path|Paths],SolutionPath):-
+ 	expand_breadthfirst(Row,Column,Blocked,Total,Path,ExpPaths),
+	append(Paths,ExpPaths,NewPaths),
+ 	breadthfirst(Row,Column,Blocked,Total,NewPaths,SolutionPath).
+
+expand_breadthfirst(Row,Column,Blocked,Total,[Node|Path],ExpPaths):-
+ 	findall([NewNode,Node|Path],
+	move_cyclefree(Row,Column,Blocked,Total,Path,Node,NewNode),
+	ExpPaths).
+
+move_cyclefree(Row,Column,Blocked,Total,Visited,Node,NextNode):-
+	member(X, [0,1]),
+	markDot(Node,Blocked,X,Row,Column,NextNode,NewRow,NewColumn),
+	\+ member(NextNode,Visited).
 
 checkSumEquality(L, S) :- Sum = S, list_adder(L, Sum).
 
@@ -46,7 +55,8 @@ decrementAt(I,List,NewList):-
 	NewValue is Value - 1,
 	insert_at(NewValue,NewList1,J,NewList).
 	
-markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
+markDot(Dotted,Blocked,X,Row,Column,NewDotted,NewRow,NewColumn):-
+	member(Y, [0,1]),
 	\+ member(X/Y,Blocked),
 	nth0(X,Row,RConstraint),
 	RConstraint \= 0,
@@ -55,3 +65,11 @@ markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
 	append([X/Y],Dotted,NewDotted),
 	decrementAt(X,Row,NewRow),
 	decrementAt(Y,Column,NewColumn).
+	%Row = NewRow,
+	%Column = NewColumn.
+
+goal(Row,Column,Total,Dotted):- 
+	checkSumEquality(Row,0),
+	checkSumEquality(Column,0),
+	length(Dotted, Length),
+	Total == Length.
