@@ -48,7 +48,7 @@ decrementAt(I,List,NewList):-
 	nth0(I,List,Value),
 	remove_at(J,List,J,NewList1),
 	NewValue is Value - 1,
-	insert_at(NewValue,NewList1,I,NewList).
+	insert_at(NewValue,NewList1,J,NewList).
 	
 markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
 	\+ member(X/Y,Blocked),
@@ -56,6 +56,6 @@ markDot(Dotted,Blocked,X/Y,Row,Column,NewDotted,NewRow,NewColumn):-
 	RConstraint \= 0,
 	nth0(Y,Column,CConstraint),
 	CConstraint \= 0,
-	append([X/Y],Dotted,NewDotted).
-	%decrementAt(X,Row,NewRow),
-	%decrementAt(Y,Column,NewColumn).
+	append([X/Y],Dotted,NewDotted),
+	decrementAt(X,Row,NewRow),
+	decrementAt(Y,Column,NewColumn).
