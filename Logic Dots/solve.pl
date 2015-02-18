@@ -1,19 +1,22 @@
-solve(Row,Column,Node,Blocked,Path):-
+/* SWI Prolog libraries used  */
+:- use_module(library(lists)).
+:- use_module(library(clpfd)).
+
+solve(Row,Column,Blocked,Node,Path):-
 	equally(Row,Column),
 	list_adder(Row,Total),
-	depthfirst(Row,Column,Blocked,[Node],Node,RevPath),
+	depthfirst(Row,Column,Blocked,[Node],Node,RevPath,Total),
 	reverse(RevPath,Path).
 
-depthfirst(Row,Column,Blocked,Visited,Node,Visited):-
+depthfirst(Row,Column,_,Visited,Node,Visited,Total):-
 	goal(Row,Column,Total,Node).
 
-%need you to fix up the thing parameter
-depthfirst(Visited,Node,Path):-
-	move_cyclefree(Visited,Node,NextNode),
-	depthfirst([NextNode|Visited],NextNode,Path).
+depthfirst(Row,Column,Blocked,Visited,Node,Path,Total):-
+	move_cyclefree(Row,Column,Blocked,Visited,Node,NextNode,NewRow,NewColumn),
+	depthfirst(NewRow,NewColumn,Blocked,[NextNode|Visited],NextNode,Path,Total).
 
-move_cyclefree(Row,Column,Blocked,Total,Visited,Node,NextNode,NewRow,NewColumn):-
-	markDot(Node,Blocked,Row,Column,[X/Y|NextNode],NewRow,NewColumn),
+move_cyclefree(Row,Column,Blocked,Visited,Node,NextNode,NewRow,NewColumn):-
+	move(Node,Blocked,Row,Column,NextNode,NewRow,NewColumn),
 	\+ member(NextNode,Visited).
 
 checkSumEquality(L, S) :- Sum = S, list_adder(L, Sum).
@@ -45,13 +48,13 @@ insert_at(X,L,K,R) :- remove_at(X,R,K,L).
 decrementAt(I,List,NewList):-
 	J is I + 1,
 	nth0(I,List,Value),
-	remove_at(Junk,List,J,NewList1),
+	remove_at(_,List,J,NewList1),
 	NewValue is Value - 1,
 	insert_at(NewValue,NewList1,J,NewList).
 
-markDot(Dotted,Blocked,Row,Column,[X/Y|Dotted],NewRow,NewColumn):-
-	member(X, [0,1]),
-	member(Y, [0,1]),
+move(Dotted,Blocked,Row,Column,[X/Y|Dotted],NewRow,NewColumn):-
+	member(X, [0,1,2,3,4,5,6]),
+	member(Y, [0,1,2,3,4,5,6]),
 	\+ member(X/Y,Blocked),
 	nth0(X,Row,RConstraint),
 	RConstraint \= 0,
