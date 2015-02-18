@@ -1,30 +1,23 @@
-
-solve(Row,Column,Blocked,Node,Path):-
+solve(Row,Column,Node,Blocked,Path):-
 	equally(Row,Column),
 	list_adder(Row,Total),
-	breadthfirst(Row,Column,Blocked,Total,[[Node]],RevPath),
+	depthfirst(Row,Column,Blocked,[Node],Node,RevPath),
 	reverse(RevPath,Path).
 
-
-breadthfirst(Row,Column,Blocked,Total,[[Node|Path]|_],[Node|Path]):-
+depthfirst(Row,Column,Blocked,Visited,Node,Visited):-
 	goal(Row,Column,Total,Node).
 
-breadthfirst(Row,Column,Blocked,Total,[Path|Paths],SolutionPath):-
- 	expand_breadthfirst(Row,Column,Blocked,Total,Path,ExpPaths,NewRow,NewColumn),
-	append(Paths,ExpPaths,NewPaths),
- 	breadthfirst(NewRow,NewColumn,Blocked,Total,NewPaths,SolutionPath).
-
-expand_breadthfirst(Row,Column,Blocked,Total,[Node|Path],ExpPaths,NewRow,NewColumn):-
- 	findall([NewNode,Node|Path],
-	move_cyclefree(Row,Column,Blocked,Total,Path,Node,NewNode,NewRow,NewColumn),
-	ExpPaths).
+%need you to fix up the thing parameter
+depthfirst(Visited,Node,Path):-
+	move_cyclefree(Visited,Node,NextNode),
+	depthfirst([NextNode|Visited],NextNode,Path).
 
 move_cyclefree(Row,Column,Blocked,Total,Visited,Node,NextNode,NewRow,NewColumn):-
-	markDot(Node,Blocked,Row,Column,NextNode,NewRow,NewColumn),
+	markDot(Node,Blocked,Row,Column,[X/Y|NextNode],NewRow,NewColumn),
 	\+ member(NextNode,Visited).
 
 checkSumEquality(L, S) :- Sum = S, list_adder(L, Sum).
-
+ 
 checkTotal(G,T):- Occ=T,occurrences(G,o,Occ).
 
 list_adder([],0).
