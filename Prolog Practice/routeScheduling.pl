@@ -19,24 +19,27 @@ dist(sarnia, kingston, 335).
 
 /* Route predicate */
 route(FROM, TO) :-
-	check_route(FROM, TO, [FROM], _).
+	check_route(FROM, TO, [FROM], _, 0, _).
 
 /* check if it has reached the target city */
-check_route(_, TO, Visited, Route) :-
+check_route(_, TO, Visited, Route, Dist, TotalDist) :-
 	member(SOME_CITY, Visited),
-	dist(SOME_CITY, TO, _),
-	reverse([TO | Visited], Route).
+	dist(SOME_CITY, TO, Distance),
+	reverse([TO | Visited], Route),
+	TotalDist is Dist + Distance.
 	
 /* check if ther are inbetween city */
-check_route(FROM, TO, Visited, Route) :-
-	dist(FROM, SOME_CITY, _),
+check_route(FROM, TO, Visited, Route, Dist, TotalDist) :-
+	dist(FROM, SOME_CITY, Distance),
 	\+ member(SOME_CITY, Visited),
-	check_route(SOME_CITY, TO, [SOME_CITY | Visited], Route).
+	TmpDist is Dist + Distance,
+	check_route(SOME_CITY, TO, [SOME_CITY | Visited], Route, TmpDist, TotalDist).
 	
 /* Route ternary predicate with Route parameter */
 route(FROM, TO, Route) :-
-	check_route(FROM, TO, [FROM], Route).
+	check_route(FROM, TO, [FROM], Route, 0, _).
 	
 /* Shortest path predicate returns true if the minimal distance between From and To is Km along Route */
-shortestpath(From, To, Route, Km) :-
-	check_route(FROM, TO, [FROM], Route).
+shortestpath(FROM, TO, Route, Km) :-
+	check_route(FROM, TO, [FROM], Route, 0, MinimalDistance),
+	MinimalDistance =< Km.
