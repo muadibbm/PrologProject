@@ -1,3 +1,6 @@
+/* SWI Prolog libraries used  */
+:- use_module(library(random)).
+:- use_module(library(lists)).
 
 /* Split predicate  -------------------------------------------- */
 split(List, Size, List1, List2) :-
@@ -71,8 +74,22 @@ insert_at_helper(Element, [Head | Tail], Index, Count, TmpList, NewList) :-
 	NewCount is Count + 1,
 	insert_at_helper(Element, Tail, Index, NewCount, [Head | TmpList], NewList).
 	
-
+/* Random Selection predicate  -------------------------------------------- 
+rnd_select(List,Number,NewList) :-
+	rnd_select_helper(List, 0, Number, [], NewList).
+rnd_select_helper(List, Count, Number, IncList, NewList) :-
+	Count == Number,
+	NewList = IncList;
+	\+ Count == Number,
+	random_member(RandomElement, List),
+	rnd_select_helper2(List, RandomElement, Count, Number, IncList, NewList).
 	
+rnd_select_helper2(List, RandomElement, Count, Number, IncList, NewList) :-
+	\+ member(RandomElement, NewList),
+	NewCount is Count + 1,
+	rnd_select_helper(List, NewCount, Number, [RandomElement | IncList], NewList);
+	member(RandomElement, NewList),
+	rnd_select_helper(List, Count, Number, IncList, NewList).*/
 	
 	
 	
