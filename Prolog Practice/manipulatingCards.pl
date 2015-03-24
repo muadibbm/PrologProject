@@ -74,32 +74,28 @@ insert_at_helper(Element, [Head | Tail], Index, Count, TmpList, NewList) :-
 	NewCount is Count + 1,
 	insert_at_helper(Element, Tail, Index, NewCount, [Head | TmpList], NewList).
 	
-/* Random Selection predicate  -------------------------------------------- 
+/* Random Selection predicate  -------------------------------------------- */
 rnd_select(List,Number,NewList) :-
 	rnd_select_helper(List, 0, Number, [], NewList).
+	
 rnd_select_helper(List, Count, Number, IncList, NewList) :-
+	length(List, Length),
+	Number > Length,
+	NewList = IncList;
 	Count == Number,
 	NewList = IncList;
-	\+ Count == Number,
+	Count < Number,
 	random_member(RandomElement, List),
 	rnd_select_helper2(List, RandomElement, Count, Number, IncList, NewList).
 	
 rnd_select_helper2(List, RandomElement, Count, Number, IncList, NewList) :-
-	\+ member(RandomElement, NewList),
+	\+ member(RandomElement, IncList),
 	NewCount is Count + 1,
 	rnd_select_helper(List, NewCount, Number, [RandomElement | IncList], NewList);
-	member(RandomElement, NewList),
-	rnd_select_helper(List, Count, Number, IncList, NewList).*/
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	member(RandomElement, IncList),
+	rnd_select_helper(List, Count, Number, IncList, NewList).
+
+/* Random Selection predicate  -------------------------------------------- */
+rnd_permu(List,NewList) :-
+	length(List, Length),
+	rnd_select(List,Length,NewList).
